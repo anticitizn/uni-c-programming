@@ -42,10 +42,10 @@ int main()
 				char groupInput;
 				float priceInput;
 				
-				printf("ID > ");
+				printf("ID    > ");
 				scanf(" %d", &idInput);
 				
-				printf("NAME > ");
+				printf("NAME  > ");
 				scanf(" %s", nameInput);
 				
 				printf("GROUP > ");
@@ -55,7 +55,7 @@ int main()
 				scanf(" %f", &priceInput);
 				
 				struct article newArticle = {idInput, " ", groupInput, priceInput};
-				strncpy(newArticle.name, nameInput, NAME_LEN);
+				strcpy(newArticle.name, nameInput);
 				
 				addArticle(&articles, &newArticle, &num_articles);
 			break;
@@ -79,15 +79,16 @@ int main()
 
 void addArticle(struct article **articles, struct article *newArticle, int *num_articles)
 {
-	struct article *buffer = (struct article*) malloc((long unsigned int)(*num_articles + 1) * sizeof(struct article));
+	*num_articles += 1;
+	struct article *buffer = (struct article*) malloc((*num_articles) * sizeof(struct article));
 	
 	for (int i = 0; i < *num_articles; i++)
 	{
 		*(buffer + i) = **(articles + i);
 	}
+	
 	*(buffer + *num_articles) = *newArticle;
 	*articles = buffer;
-	*num_articles += 1;
 }
 
 void print(struct article *item, int num_articles)
