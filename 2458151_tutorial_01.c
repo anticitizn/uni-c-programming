@@ -30,13 +30,13 @@ int main()
 	}
 	
 	int bahncardType = 0;
-	printf("Do you have a Bahncard?\n);
+	printf("Do you have a Bahncard?\n");
 	
 	if (getYesNoInput())
 	{
 		while (bahncardType < 1 || bahncardType > 2)
 		{
-			printf("Which type?");
+			printf("Which type?\n");
 			printf("[1] Type 25\n");
 			printf("[2] Type 50\n");
 			scanf(" %d", &bahncardType);
@@ -55,10 +55,9 @@ int main()
 			scanf(" %d", &age);
 		}
 		
-		char seniorCode[MAX_LEN] = {0};
-		while (seniorCode[4] != 0)
+		char seniorCode[MAX_LEN] = { 0 };
+		while (seniorCode[3] == 0 || seniorCode[4] != 0)
 		{
-			seniorCode[MAX_LEN] = {0};
 			printf("Please enter your ID > ");
 			scanf(" %s", seniorCode);
 		}
@@ -71,9 +70,30 @@ int main()
 	{
 		char code[4];
 		// gutschein handling
-		printf("Please enter your coupon's code > ");
-		scanf(" %4s|%2d", 
+		while (couponValue < 1)
+		{
+			printf("Please enter your coupon's code > ");
+			scanf(" %4s|%2d", code, &couponValue);
+		}
 	}
+	
+	float price;
+	price = city_dist[destination - 1] * KM_COST;
+	printf("\nRegular price: %.2f\n", price);
+	
+	// v hier wird es null
+	if (age < 0)
+		price *= bahncardType > 0 ? ((25 * bahncardType) / 100.0f) : 1;
+	else
+		price = price > price * (age / 100) ? price * (age / 100.0f) : 0;
+	// ^ hier wird es null
+	
+	printf("Price after Bahncard/senior discount: %.2f\n", price);
+	
+	if (price > 0)
+		price = price > couponValue ? price - couponValue : 0;
+		
+	printf("Final price after applying coupon: %.2f\n", price);
 	
 	return 0;
 }
@@ -96,7 +116,7 @@ void initializeArrays(int city_dist[CITIES], char city_name[CITIES][MAX_LEN])
 int getYesNoInput()
 {
 	char yninput[MAX_LEN] = {0};
-	while (strcmp(yninput, "ja") != 0 || strcmp(yninput, "nein") != 0)
+	while (!(strcmp(yninput, "ja") == 0 || strcmp(yninput, "nein") == 0))
 	{
 		printf("ja/nein > ");
 		scanf(" %s", yninput);
