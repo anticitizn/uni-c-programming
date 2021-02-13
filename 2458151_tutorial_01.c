@@ -64,14 +64,15 @@ int main()
 		}
 	}
 	
-	int hasGutschein = -1;
-	char gutscheinCode[7] = {0};
-	
+	int couponValue = 0;
 	printf("Do you have a coupon?\n");
 	
 	if (getYesNoInput())
 	{
+		char code[4];
 		// gutschein handling
+		printf("Please enter your coupon's code > ");
+		scanf(" %4s|%2d", 
 	}
 	
 	return 0;
