@@ -7,8 +7,6 @@
 #define ID_LEN 	  6
 
 #define BUFFER_SIZE 1024
-#define FILENAME 	"customers.csv"
-#define PATH 	 	""
 
 struct customer
 {
@@ -29,12 +27,11 @@ struct queue* createQueue(int capacity);
 int isFullQueue(struct queue* Queue);
 void enqueue(struct queue* Queue, struct customer item);
 struct customer dequeue(struct queue* Queue);
-void importCustomers(struct customer customers[CUSTOMERS]);
+void importCustomers(struct queue* customerQueue, char filename[BUFFER_SIZE]);
 
 int main()
 {
-	struct queue* customerQueue = createQueue(CUSTOMERS);
-	struct customer customers[CUSTOMERS];
+	struct queue* customerQueue;
 	
 	int running = 1;
 	while (running)
@@ -53,28 +50,51 @@ int main()
 			case 'I':
 			case 'i':
 				// import
-				importCustomers(customers);
-				printf("%-5s   %-10s   %-15s\n", "ID", "NAME", "FREQUENT TRAVELER");
-				for (int i = 0; i < CUSTOMERS; i++)
+				customerQueue = createQueue(CUSTOMERS);
+				printf("Please enter the filename > ");
+				
+				char filename[BUFFER_SIZE];
+				scanf(" %s", filename);
+				
+				importCustomers(customerQueue, filename);
+				printf("\n%-5s   %-10s   %-15s\n", "ID", "NAME", "FREQUENT TRAVELER");
+				for (int i = 0; i < customerQueue->size; i++)
 				{
-					printf("%-5s | %-10s | %-15s\n", customers[i].id, customers[i].name, customers[i].frequentTraveller == 1 ? "YES" : "NO");
+					printf("%-5s | %-10s | %-15s\n", customerQueue->elements[i].id, customerQueue->elements[i].name, customerQueue->elements[i].frequentTraveller == 1 ? "YES" : "NO");
 				}
+				
 			break;
 			
 			case 'S':
 			case 's':
 				// simulation
-				for (int i = 0; i < CUSTOMERS; i++)
-				{
-					enqueue(customerQueue, customers[i]);
-				}
-				
 				putchar('\n');
 				
-				for (int i = 0; i < CUSTOMERS; i++)
+				//~ for (int i = 0; i < CUSTOMERS; i++)
+				//~ {
+					//~ dequeue(customerQueue);
+				//~ }
+				while (customerQueue->size > 0)
 				{
+					printf("QUEUE:\n");
+					int i = 0;
+					for (int j = 0; j < CUSTOMERS; j++)
+					{
+						printf(" | ");
+						if (i < customerQueue->size)
+						{
+							printf("%s", customerQueue->elements[j].name);
+						}
+						putchar('\n');
+						i++;
+					}
+					
+					putchar('\n');
 					dequeue(customerQueue);
+					putchar('\n');
 				}
+				
+				
 				
 			break;
 			
@@ -135,17 +155,16 @@ struct customer dequeue(struct queue* Queue)
 	return firstItem;
 }
 
-void importCustomers(struct customer customers[CUSTOMERS])
+void importCustomers(struct queue* customerQueue, char filename[BUFFER_SIZE])
 {
 	char buffer[BUFFER_SIZE];
-	FILE* file = fopen(PATH FILENAME, "r");
+	FILE* file = fopen(filename, "r");
 	if (!file)
 	{
-		printf("Unable to open " FILENAME "\n");
+		printf("Unable to open file \n");
 		return;
 	}
 	
-	int i = 0;
 	while (fgets(buffer, BUFFER_SIZE, file))
 	{
 		struct customer cust;
@@ -173,9 +192,7 @@ void importCustomers(struct customer customers[CUSTOMERS])
 			row++;
 			
 		}
-		customers[i] = cust;
-		
-		i++;
+		enqueue(customerQueue, cust);
 	}
 	
 }
